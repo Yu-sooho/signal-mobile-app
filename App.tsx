@@ -8,13 +8,15 @@
  * @format
  */
 
-import React, {type PropsWithChildren} from 'react';
+import { Observer } from 'mobx-react-lite';
+import React, {useEffect, useState, type PropsWithChildren} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
@@ -26,6 +28,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import useRootData from './src/hooks/useRootData';
 
 const Section: React.FC<
   PropsWithChildren<{
@@ -64,9 +67,35 @@ const App = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const [temp , setTemp] = useState(0)
+
+  const {screenMode,changeScreenMode} = useRootData(({screenModeStore})=>({
+    screenMode:screenModeStore.screenMode.get(),
+    changeScreenMode:screenModeStore.changeScreenMode
+  }))
+
+  useEffect(()=>{
+    console.log(screenMode,'FUFU')
+  },[])
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <Observer>
+        {()=>{
+          return(
+            <View>
+              <Text>{screenMode}</Text>
+            </View>
+          )
+        }}
+      </Observer>
+      <TouchableOpacity onPress={()=>{
+        setTemp(temp+1)
+        changeScreenMode(temp)
+      }}>
+        <Text>123</Text>
+      </TouchableOpacity>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
